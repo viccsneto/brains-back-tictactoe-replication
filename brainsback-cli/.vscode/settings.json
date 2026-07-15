@@ -1,0 +1,37 @@
+{
+    "latex-workshop.latex.outDir": "%DIR%/output",
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk (temp -> output)",
+            "tools": [
+                "latexmk_temp",
+                "move_pdf_and_synctex"
+            ]
+        }
+    ],
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk_temp",
+            "command": "latexmk",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-pdf",
+                "-outdir=%DIR%/temp",
+                "%DOC%"
+            ],
+            "env": {}
+        },
+        {
+            "name": "move_pdf_and_synctex",
+            "command": "bash",
+            "args": [
+                "-c",
+                "mkdir -p \"%DIR%/output\" && mv \"%DIR%/temp/%DOCFILE%.pdf\" \"%DIR%/output/\" && (mv \"%DIR%/temp/%DOCFILE%.synctex.gz\" \"%DIR%/output/\" 2>/dev/null || true)"
+            ],
+            "env": {}
+        }
+    ],
+    "latex-workshop.latex.recipe.default": "latexmk (temp -> output)"
+}

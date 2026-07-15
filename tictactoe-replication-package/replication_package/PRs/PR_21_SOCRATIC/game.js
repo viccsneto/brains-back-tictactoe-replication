@@ -1,0 +1,119 @@
+'use strict';
+
+const WINNING_COMBOS = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+  [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+  [0, 4, 8], [2, 4, 6],            // diagonals
+];
+
+const PLAYER_X = 'X';
+const PLAYER_O = 'O';
+const PLAYER_X_ICON = '🐱';
+const PLAYER_O_ICON = '🐶';
+
+/**
+ * Returns the initial game state.
+ */
+function createInitialState() {
+  return {
+    board:   Array(9).fill(''),
+    current: PLAYER_X,
+    gameOver: false,
+  };
+}
+
+/**
+ * Returns the initial score state.
+ */
+function createInitialScore() {
+  return {
+    [PLAYER_X]: 0,
+    [PLAYER_O]: 0,
+  };
+}
+
+/**
+ * Returns a new score object with one win added for the winner.
+ * @param {{ X: number, O: number }} score
+ * @param {'X'|'O'|null} winner
+ * @returns {{ X: number, O: number }}
+ */
+function addWin(score, winner) {
+  if (winner !== PLAYER_X && winner !== PLAYER_O) return score;
+  return {
+    ...score,
+    [winner]: score[winner] + 1,
+  };
+}
+
+/**
+ * Returns the next player given the current one.
+ * @param {'X'|'O'} current
+ * @returns {'X'|'O'}
+ */
+function getNextPlayer(current) {
+  return current === PLAYER_X ? PLAYER_O : PLAYER_X;
+}
+
+/**
+ * Maps a player mark to the icon shown in the UI.
+ * @param {'X'|'O'|string} player
+ * @returns {string}
+ */
+function getPlayerIcon(player) {
+  if (player === PLAYER_X) return PLAYER_X_ICON;
+  if (player === PLAYER_O) return PLAYER_O_ICON;
+  return player;
+}
+
+/**
+ * Returns a new board with the move applied, or null if the move is invalid.
+ * @param {string[]} board
+ * @param {number}   index  0-8
+ * @param {'X'|'O'} player
+ * @returns {string[]|null}
+ */
+function applyMove(board, index, player) {
+  if (index < 0 || index > 8) return null;
+  if (board[index] !== '')    return null;
+  const next = board.slice();
+  next[index] = player;
+  return next;
+}
+
+/**
+ * Checks the board for a winner or draw.
+ * @param {string[]} board
+ * @returns {{ winner: string, combo: number[] }|{ winner: null, combo: [] }|null}
+ *   - Object with winner ('X'|'O') and winning combo indices if someone won.
+ *   - Object with winner null and empty combo if the board is full (draw).
+ *   - null if the game is still in progress.
+ */
+function checkWinner(board) {
+  for (const combo of WINNING_COMBOS) {
+    const [a, b, c] = combo;
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      return { winner: board[a], combo };
+    }
+  }
+  if (board.every(cell => cell !== '')) return { winner: null, combo: [] };
+  return null;
+}
+
+// Allow require() in Node.js (Jest) while remaining a plain script in the browser.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    WINNING_COMBOS,
+    PLAYER_X,
+    PLAYER_O,
+    PLAYER_X_ICON,
+    PLAYER_O_ICON,
+    createInitialState,
+    createInitialScore,
+    getNextPlayer,
+    getPlayerIcon,
+    addWin,
+    applyMove,
+    checkWinner,
+  };
+}

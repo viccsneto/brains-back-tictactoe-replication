@@ -1,0 +1,80 @@
+'use strict';
+
+// WINNING_COMBOS, checkWinner, getNextPlayer, applyMove, createInitialState, updateWins
+// are provided by game.js, loaded before this script.
+
+const cells    = document.querySelectorAll('.cell');
+const status   = document.getElementById('status');
+const restartBtn     = document.getElementById('restart');
+const catWinsEl      = document.getElementById('cat-wins');
+const dogWinsEl      = document.getElementById('dog-wins');
+
+let state = createInitialState();
+
+function render() {
+  cells.forEach((cell, i) => {
+    cell.textContent = state.board[i];
+    cell.className   = 'cell' + (state.board[i] ? ` ${state.board[i].toLowerCase()}` : '');
+    cell.disabled    = state.board[i] !== '' || state.gameOver;
+  });
+  catWinsEl.textContent = state.catWins;
+  dogWinsEl.textContent = state.dogWins;
+}
+
+function setStatus(msg, cls = '') {
+  status.textContent = msg;
+  status.className   = 'status' + (cls ? ` ${cls}` : '');
+}
+
+function handleClick(e) {
+  const idx = Number(e.currentTarget.dataset.index);
+  if (state.board[idx] || state.gameOver) return;
+
+  const nextBoard = applyMove(state.board, idx, state.current);
+  if (!nextBoard) return;
+  state.board = nextBoard;
+  render();
+
+  // Animate the placed cell
+  cells[idx].classList.add('placed');
+
+  const result = checkWinner(state.board);
+
+  if (result) {
+    state.gameOver = true;
+    if (result.winner) {
+      updateWins(state, result.winner);
+      result.combo.forEach(i => cells[i].classList.add('winning'));
+      const playerName = result.winner === '🐱' ? 'Cat (🐱)' : 'Dog (🐶)';
+      setStatus(`${playerName} wins!`, 'win');
+    } else {
+      setStatus("It's a draw!", 'draw');
+    }
+    // Disable all cells
+    cells.forEach(c => (c.disabled = true));
+    render(); // Update scoreboard
+    return;
+  }
+
+  state.current = getNextPlayer(state.current);
+  const playerName = state.current === '🐱' ? 'Cat (🐱)' : 'Dog (🐶)';
+  setStatus(`${playerName}'s turn`);
+}
+
+function restartGame() {
+  const { catWins, dogWins } = state;
+  state = createInitialState();
+  state.catWins = catWins;
+  state.dogWins = dogWins;
+  render();
+  const playerName = state.current === '🐱' ? 'Cat (🐱)' : 'Dog (🐶)';
+  setStatus(`${playerName}'s turn`);
+}
+
+cells.forEach(cell => cell.addEventListener('click', handleClick));
+restartBtn.addEventListener('click', restartGame);
+
+// Initial render
+render();
+const playerName = state.current === '🐱' ? 'Cat (🐱)' : 'Dog (🐶)';
+setStatus(`${playerName}'s turn`);
