@@ -1,4 +1,4 @@
-# brains-back-replication
+# brains-back-tictactoe-replication-package
 
 This repository contains the artifacts and replication package for the Tic-Tac-Toe Experiment on LLM-assisted software development.
 
