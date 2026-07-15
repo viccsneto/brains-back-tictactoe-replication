@@ -1,6 +1,9 @@
-# Brains-Back TicTacToe Replication Package
+# Putting Brains Back in the Loop: A Mastery-Aware Pipeline for LLM-Assisted Software Development
+## TicTacToe Replication Package
 
-This repository contains the artifacts and replication package for the Tic-Tac-Toe Experiment on LLM-assisted software development.
+This repository contains the artifacts and replication package for the Tic-Tac-Toe Experiment on LLM-assisted software development referred in the "Putting Brains Back in the Loop: A Mastery-Aware Pipeline for LLM-Assisted Software Development" SBES 2026 article.
+
+## TicTacToe Replication Package.
 
 ## Repository Structure 
 
